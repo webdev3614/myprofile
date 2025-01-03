@@ -13,7 +13,13 @@
   let snackbar: Snackbar | null = $state(null);
   let status = $state(200);
   let message = $state("");
-  export const onCancel = async () => {};
+  export const onCancel = async () => {
+    first_name = "";
+    last_name = "";
+    email = "";
+    password = "";
+    confirm_password = "";
+  };
   export const onSignup = async () => {
     const user_info = {
       first_name,
@@ -27,11 +33,18 @@
       "http://localhost:3000/api/auth/signup",
       user_info,
     );
-    console.log(result);
     switch (result.status) {
       case 200:
+        status = result.status;
+        message = result.data.message;
+        if (snackbar) {
+          snackbar.open();
+          window.location.href = "/login"
+        }
         break;
       case 400:
+      case 409:
+      case 500:
         status = result.status;
         message = result.response.data.message;
         if (snackbar) {

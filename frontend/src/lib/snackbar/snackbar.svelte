@@ -13,7 +13,7 @@
     class={`demo-${
         status === 200
             ? "success"
-            : status === 400
+            : status === 400 || status === 409
               ? "warning"
               : status === 500
                 ? "error"

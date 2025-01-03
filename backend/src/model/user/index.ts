@@ -3,7 +3,8 @@ import bcrypt from "bcrypt";
 import user_schema, { IUser } from "./schema";
 
 interface IUserModel extends Model<IUser> {
-    add({ first_name, last_name, email, password }: { first_name: string, last_name: string, email: string, password: string }): Promise<boolean>;
+    add({ first_name, last_name, email, password }: { first_name: string, last_name: string, email: string, password: string }): Promise<any>
+    verify({ email, password }:{ email: string, password: string }):Promise<any>
 }
 
 // Middleware to hash the password before saving the user document
@@ -13,7 +14,7 @@ user_schema.pre<IUser>("save", async function (next) {
             // Generate a salt with 10 rounds
             const salt = await bcrypt.genSalt(10);
             // Hash the password using the salt
-            this.password = await bcrypt.hash(this.password, salt);
+            this.password = await bcrypt.hash(this.password, salt)
         } catch (err) {
             next(err as CallbackError);  // Pass any error to the next middleware
         }
@@ -25,19 +26,22 @@ user_schema.pre<IUser>("save", async function (next) {
 user_schema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
     try {
         // Compare the candidate password with the stored hashed password
-        return await bcrypt.compare(candidatePassword, this.password);
+        return await bcrypt.compare(candidatePassword, this.password)
     } catch (err) {
         throw new Error("Password comparison failed");
     }
 };
 
 // Method to compare the candidate password with the hashed password
-user_schema.statics.add = async function ({first_name,last_name,email,password}): Promise<boolean> {
+user_schema.statics.add = async function ({ first_name, last_name, email, password }): Promise<any> {
     const result =await this.findOne({
         email
     })
     if(result){
-        return false
+        return {
+            state:false,
+            msg:"Email is already used by other user."
+        }
     }else{
         const model = new User({
             first_name,
@@ -45,8 +49,43 @@ user_schema.statics.add = async function ({first_name,last_name,email,password})
             email,
             password
         })
-        model.save()
-        return true
+        try {
+            await model.save()
+            return {
+                state:true,
+                msg:"Your sign up is successful."
+            }
+        } catch (error:any) {
+            return {
+                state:false,
+                msg:error.message
+            }
+        }
+    }
+};
+
+// Method to compare the candidate password with the hashed password
+user_schema.statics.verify = async function ({ email, password }): Promise<any> {
+    const result =await this.findOne({
+        email
+    })
+    if(result){
+        if(result.comparePassword(password)){
+            return {
+                state:true,
+                msg:"Log in is successful."
+            }
+        }else{
+            return {
+                state:false,
+                msg:"Your password is incorrect."
+            }
+        }
+    }else{
+        return {
+            state:false,
+            msg:"Email is not exists."
+        }
     }
 };
 
