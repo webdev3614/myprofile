@@ -1,11 +1,14 @@
 <script lang="ts">
-    import { Header } from "$lib";
+    import { Header, Body } from "../lib";
+
     let { children } = $props();
 </script>
 
-<div style="width: 100%; overflow: hidden;">
+<div style="width: 100%">
     <Header />
 </div>
 <div class="container-fluid">
-    {@render children()}
+    <Body>
+        {@render children()}
+    </Body>
 </div>

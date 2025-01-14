@@ -2,18 +2,22 @@
   import Card, { Content, Actions, PrimaryAction } from "@smui/card";
   import Button, { Label } from "@smui/button";
   import Textfield from "@smui/textfield";
-  import Snackbar from "@smui/snackbar";
-  import { ajax, Snackbar as Snack } from "../../lib";
+  import { ajax } from "../../lib";
+  import { goto } from "$app/navigation";
+  import { snackbar, status, message } from "../../stores";
 
   let first_name = $state("");
   let last_name = $state("");
   let email = $state("");
   let password = $state("");
   let confirm_password = $state("");
-  let snackbar: Snackbar | null = $state(null);
-  let status = $state(200);
-  let message = $state("");
-  export const onCancel = async () => {};
+  export const onCancel = async () => {
+    first_name = "";
+    last_name = "";
+    email = "";
+    password = "";
+    confirm_password = "";
+  };
   export const onSignup = async () => {
     const user_info = {
       first_name,
@@ -22,20 +26,23 @@
       password,
       confirm_password,
     };
-    const result = await ajax(
-      "post",
-      "http://localhost:3000/api/auth/signup",
-      user_info,
-    );
-    console.log(result);
+    const result = await ajax("post", "/auth/signup", user_info);
     switch (result.status) {
       case 200:
+        status.set(result.status);
+        message.set(result.data.message);
+        if ($snackbar) {
+          $snackbar.open();
+          goto("/login");
+        }
         break;
       case 400:
-        status = result.status;
-        message = result.response.data.message;
-        if (snackbar) {
-          snackbar.open();
+      case 409:
+      case 500:
+        status.set(result.status);
+        message.set(result.response.data.message);
+        if ($snackbar) {
+          $snackbar.open();
         }
         break;
       default:
@@ -101,4 +108,3 @@
     </Card>
   </div>
 </div>
-<Snack bind:snackbar bind:message bind:status />

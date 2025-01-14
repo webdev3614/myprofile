@@ -21,19 +21,17 @@ export default (req: Request, res: Response) => {
             last_name,
             email,
             password
-        }).then((result:any)=>{
-            if(result){
+        }).then((result)=>{
+            if(result.state){
                 res.status(200).json({
-                    ...req.body,
-                    message:`Success to sign up user ${first_name} ${last_name}.`
+                    message:result.msg
                 })
             }else{
                 res.status(409).json({
-                    ...req.body,
-                    message:`The email address ${email} is already registered.`
+                    message:result.msg
                 })
             }
-        }).catch((err:any)=>{
+        }).catch((err)=>{
             res.status(500).json({
                 message:`fire errors on Server:${err.message}`
             })
