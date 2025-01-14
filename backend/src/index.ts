@@ -3,13 +3,27 @@ import mongoose from "mongoose";
 import router from "./routes";
 import cors from "cors";
 import bodyParser from "body-parser";
-const app = express();
-const PORT = process.env.PORT || 3000;
+import https from "https";
+import fs from "fs";
+import path from "path";
+import {
+  secret
+} from "./middleware";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const sslOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
+};
+
+const app = express();
+const PORT = process.env.PORT || 8080;
 app.use(cors())
 app.use(bodyParser.json())
-
-mongoose.connect('mongodb://localhost:27017/frank_profile')
+app.use(secret)
+mongoose.connect('mongodb://localhost:27017/dream')
 .then(() => {
   console.log('Connected to MongoDB');
 })
@@ -17,8 +31,8 @@ mongoose.connect('mongodb://localhost:27017/frank_profile')
   console.error('Failed to connect to MongoDB', err);
 });
 
-app.use("/api",router)
+app.use("/api", router)
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`HTTPS Server running on https://localhost:${PORT}`);
 });

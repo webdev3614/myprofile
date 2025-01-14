@@ -2,11 +2,12 @@ import { Schema, Document } from "mongoose";
 
 // Define the interface for the user document
 interface IUser extends Document {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-    createdAt: Date;
+    first_name: string
+    last_name: string
+    email: string
+    password: string
+    is_admin: boolean
+    createdAt: Date
 }
 
 // Define the schema
@@ -33,6 +34,10 @@ const user_schema = new Schema<IUser>({
         type: String,
         required: true,
         minlength: 6  // Password must be at least 6 characters long
+    },
+    is_admin: {
+        type: Boolean,
+        required: true
     },
     createdAt: {
         type: Date,

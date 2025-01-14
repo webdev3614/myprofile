@@ -5,7 +5,6 @@
     export let snackbar;
     export let message;
     export let status;
-
 </script>
 
 <Snackbar
