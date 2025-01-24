@@ -4,6 +4,8 @@
     import { user } from "../../stores";
     import { goto } from "$app/navigation";
     import { Logo } from "./logo";
+    import { lang } from "../../stores";
+    import { text } from "../../assets";
 </script>
 
 <TopAppBar variant="static" color="primary">
@@ -13,9 +15,13 @@
                 class="material-icons"
                 onclick={() => {
                     goto("/");
-                }}>home</IconButton
+                }}
             >
-            <Title>Dream</Title>
+                home
+            </IconButton>
+            <Title>
+                {text("dream", $lang)}
+            </Title>
         </Section>
         <Section align="end" toolbar>
             {#if $user && $user.email == ""}
@@ -24,15 +30,19 @@
                     aria-label="Login"
                     onclick={() => {
                         goto("/login");
-                    }}>vpn_key_rounded</IconButton
+                    }}
                 >
+                    vpn_key_rounded
+                </IconButton>
                 <IconButton
                     class="material-icons overflow-hidden"
                     aria-label="Signup"
                     onclick={() => {
                         goto("/signup");
-                    }}>person_add_rounded</IconButton
+                    }}
                 >
+                    person_add_rounded
+                </IconButton>
             {:else}
                 <Logo bind:user={$user} />
             {/if}
@@ -41,8 +51,10 @@
                 aria-label="Help"
                 onclick={() => {
                     goto("/help");
-                }}>help_rounded</IconButton
+                }}
             >
+                help_rounded
+            </IconButton>
         </Section>
     </Row>
 </TopAppBar>

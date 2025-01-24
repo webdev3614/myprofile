@@ -4,18 +4,19 @@
     import List, { Item, PrimaryText, SecondaryText, Text } from "@smui/list";
     import Menu from "@smui/menu";
     import { Anchor } from "@smui/menu-surface";
+    import { text } from "../../assets";
+    import { lang } from "../../stores";
 
     let menu: Menu;
     let anchor: HTMLElement | undefined = $state();
     let anchorClasses: { [k: string]: boolean } = $state({});
 
     let { user = $bindable() } = $props();
-
     export const menu_list = () => {
         let item_list = [];
         if (user.is_admin) {
             item_list.push({
-                pt: "Admin",
+                pt: text("admin", $lang),
                 st: "This is the page for site management.",
                 action: () => {
                     goto("/admin");
@@ -24,17 +25,24 @@
         }
         item_list = item_list.concat([
             {
-                pt: "My Portofolio",
-                st: "This is my portofolio page.",
+                pt: text("portofolio", $lang),
+                st: text("this is my portofolio page.", $lang),
                 action: () => {
                     goto(`/portofolio/${user.email}`);
                 },
             },
             {
-                pt: "My Profile",
-                st: "This is my profile page.",
+                pt: text("profile", $lang),
+                st: text("this is my profile page.", $lang),
                 action: () => {
                     goto(`/profile/${user.email}`);
+                },
+            },
+            {
+                pt: text("log out", $lang),
+                st: text("log out site.", $lang),
+                action: () => {
+                    goto(`/logout`);
                 },
             },
         ]);

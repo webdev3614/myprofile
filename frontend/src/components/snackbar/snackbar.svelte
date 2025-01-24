@@ -1,9 +1,9 @@
 <script lang="ts">
     import Snackbar, { Label, Actions } from "@smui/snackbar";
     import IconButton from "@smui/icon-button";
-    
+
     export let snackbar;
-    export let message;
+    export let msg;
     export let status;
 </script>
 
@@ -19,7 +19,7 @@
                 : "default"
     }`}
 >
-    <Label>{message}</Label>
+    <Label>{msg}</Label>
     <Actions>
         <IconButton class="material-icons" title="Dismiss">close</IconButton>
     </Actions>

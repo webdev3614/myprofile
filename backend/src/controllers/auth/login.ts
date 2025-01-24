@@ -14,16 +14,16 @@ export default (req: AuthRequest, res: Response) => {
                 const token = jwt.sign({ email }, req.secret, { expiresIn: 60 * 60 * 1000 });
                 res.status(200).json({
                     token,
-                    message: result.msg
+                    msg: result.msg
                 })
             } else {
-                res.status(401).json({ message: "secret key doesn't exist" })
+                res.status(401).json({ msg: "secret key doesn't exist" })
             }
         } else {
-            res.status(409).json({ message: result.msg })
+            res.status(409).json({ msg: result.msg })
         }
     }).catch((err) => {
         console.log(err)
-        res.status(500).json({ message: `fire errors on Server:${err.message}` })
+        res.status(500).json({ msg: `fire errors on Server:${err.msg}` })
     })
 }

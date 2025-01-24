@@ -3,34 +3,32 @@ import User from "../../model/user";
 import { AuthRequest } from "../../libs";
 
 export default (req: AuthRequest, res: Response) => {
-    if(req.token){
+    if (req.token) {
         const email = req.token.email;
-        if(email){
-            User.user({
-                email
-            }).then((result)=>{
-                if(result.state){
+        if (email) {
+            User.user(email).then((result) => {
+                if (result.state) {
                     res.status(200).json({
-                        message:result.msg
+                        info: result.info
                     })
-                }else{
+                } else {
                     res.status(409).json({
-                        message:result.msg
+                        msg: result.msg
                     })
                 }
-            }).catch((err)=>{
+            }).catch((err) => {
                 res.status(500).json({
-                    message:`fire errors on Server:${err.message}`
+                    msg: `fire errors on Server:${err.msg}`
                 })
             })
-        }else{
+        } else {
             res.status(403).json({
-                message:"email does not exist."
+                msg: "email does not exist."
             })
         }
-    }else{
+    } else {
         res.status(403).json({
-            message:"token does not exist."
+            msg: "The token does not exist."
         })
     }
 }

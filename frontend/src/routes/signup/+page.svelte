@@ -2,9 +2,10 @@
   import Card, { Content, Actions, PrimaryAction } from "@smui/card";
   import Button, { Label } from "@smui/button";
   import Textfield from "@smui/textfield";
-  import { ajax } from "../../lib";
+  import { ajax } from "../../libs";
   import { goto } from "$app/navigation";
-  import { snackbar, status, message } from "../../stores";
+  import { text } from "../../assets";
+  import { lang } from "../../stores";
 
   let first_name = $state("");
   let last_name = $state("");
@@ -26,83 +27,79 @@
       password,
       confirm_password,
     };
-    const result = await ajax("post", "/auth/signup", user_info);
-    switch (result.status) {
-      case 200:
-        status.set(result.status);
-        message.set(result.data.message);
-        if ($snackbar) {
-          $snackbar.open();
-          goto("/login");
-        }
-        break;
-      case 400:
-      case 409:
-      case 500:
-        status.set(result.status);
-        message.set(result.response.data.message);
-        if ($snackbar) {
-          $snackbar.open();
-        }
-        break;
-      default:
-        break;
+    const result: any = await ajax("post", "/auth/signup", user_info);
+    if (result.status === 200) {
+      goto("/login");
     }
   };
 </script>
 
-<div class="container d-flex justify-content-center align-items-center p-5">
-  <div class="card shadow-sm">
+<div class="flex flex-col justify-center items-center w-full h-full p-10">
+  <div class="card shadow-md">
     <Card>
-      <PrimaryAction class="border-bottom border-dark p-3">
-        Sign Up
+      <PrimaryAction class="border-b border-gray-100 p-3">
+        {text("sign up", $lang)}
       </PrimaryAction>
-      <Content class="p-3">
-        <div class="row">
-          <div class="col">
-            <Textfield bind:value={first_name} label="First Name" />
+      <Content class="divide-y divide-gray-100">
+        <div class="px-4 py-6 sm:grid grid-cols-3 sm:gap-4 sm:px-0">
+          <div class="text-sm/6 font-medium text-gray-900">
+            <Textfield
+              class="w-full"
+              type="text"
+              bind:value={first_name}
+              label={text("first name", $lang)}
+            />
           </div>
-          <div class="col">
-            <Textfield bind:value={last_name} label="Last Name" />
+          <div class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <Textfield
+              class="w-full"
+              type="text"
+              bind:value={last_name}
+              label={text("last name", $lang)}
+            />
           </div>
         </div>
-        <div class="row">
-          <div class="col">
+        <div class="px-4 py-6 sm:grid grid-cols-3 sm:gap-4 sm:px-0">
+          <div class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
             <Textfield
-              bind:value={email}
-              label="Email"
+              class="w-full"
+              label={text("email", $lang)}
               type="email"
-              class="w-100"
+              bind:value={email}
             />
           </div>
         </div>
-        <div class="row">
-          <div class="col">
+        <div class="px-4 py-6 sm:grid grid-cols-3 sm:gap-4 sm:px-0">
+          <div class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
             <Textfield
+              class="w-full"
+              label={text("password", $lang)}
+              type="password"
               bind:value={password}
-              label="Password"
-              type="password"
-              class="w-100"
             />
           </div>
         </div>
-        <div class="row">
-          <div class="col">
+        <div class="px-4 py-6 sm:grid grid-cols-3 sm:gap-4 sm:px-0">
+          <div class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
             <Textfield
-              bind:value={confirm_password}
-              label="Confirm password"
+              class="w-full"
+              label={text("confirm password", $lang)}
               type="password"
-              class="w-100"
+              bind:value={confirm_password}
             />
           </div>
         </div>
       </Content>
-      <Actions class="row p-3">
+      <Actions class="flex flex-row justify-end items-center p-3">
         <Button class="col" onclick={onCancel}>
-          <Label>Cancel</Label>
+          <Label>
+            {text("cancel", $lang)}
+          </Label>
         </Button>
         <Button class="col" onclick={onSignup}>
-          <Label>Sign up</Label>
+          <Label>
+            {text("sign up", $lang)}
+          </Label>
         </Button>
       </Actions>
     </Card>

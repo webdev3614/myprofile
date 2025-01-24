@@ -5,7 +5,8 @@ import user_schema, { IUser } from "./schema";
 interface IUserModel extends Model<IUser> {
     add({ first_name, last_name, email, password }: { first_name: string, last_name: string, email: string, password: string }): Promise<any>
     verify({ email, password }: { email: string, password: string }): Promise<any>
-    user({ email }: { email: string }): Promise<any>
+    user(email: string): Promise<any>
+    update({ email, key, val }: { email: string, key: string, val: any }): Promise<any>
 }
 
 // Middleware to hash the password before saving the user document
@@ -62,7 +63,7 @@ user_schema.statics.add = async function ({ first_name, last_name, email, passwo
         } catch (error: any) {
             return {
                 state: false,
-                msg: error.message
+                msg: error.msg
             }
         }
     }
@@ -94,17 +95,18 @@ user_schema.statics.verify = async function ({ email, password }): Promise<any> 
 };
 
 // Method to compare the candidate password with the hashed password
-user_schema.statics.user = async function ({ email }): Promise<any> {
+user_schema.statics.user = async function (email): Promise<any> {
     const result = await this.findOne({
         email
     })
     if (result) {
         return {
             state: true,
-            msg: {
+            info: {
                 email: result.email,
                 first_name: result.first_name,
                 last_name: result.last_name,
+                img: result.img,
                 is_admin: result.is_admin
             }
         }
@@ -115,6 +117,25 @@ user_schema.statics.user = async function ({ email }): Promise<any> {
         }
     }
 };
+
+user_schema.statics.update = async function ({ email, key, val }): Promise<any> {
+    const result = await this.updateOne({
+        email
+    }, {
+        [key]: val
+    })
+    if (result) {
+        return {
+            state: true,
+            msg: "It is successful to upload img."
+        }
+    } else {
+        return {
+            state: false,
+            msg: "It is failure to upload img."
+        }
+    }
+}
 
 const User = mongoose.model<IUser, IUserModel>('User', user_schema)
 

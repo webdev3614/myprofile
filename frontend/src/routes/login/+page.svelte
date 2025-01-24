@@ -2,9 +2,11 @@
   import Card, { Content, Actions, PrimaryAction } from "@smui/card";
   import Button, { Label } from "@smui/button";
   import Textfield from "@smui/textfield";
-  import { ajax } from "../../lib";
-  import { token, snackbar, status, message } from "../../stores";
+  import { ajax } from "../../libs";
+  import { token } from "../../stores";
   import { goto } from "$app/navigation";
+  import { text } from "../../assets";
+  import { lang } from "../../stores";
 
   let email = $state("");
   let password = $state("");
@@ -13,29 +15,11 @@
       email,
       password,
     };
-    const result = await ajax("post", "/auth/login", user_info);
-    switch (result.status) {
-      case 200:
-        if ($snackbar) {
-          status.set(result.status);
-          message.set(result.data.message);
-          token.set(result.data.token);
-          localStorage.setItem("token", $token);
-          $snackbar.open();
-          goto("/");
-        }
-        break;
-      case 400:
-      case 409:
-      case 500:
-        status.set(result.status);
-        message.set(result.response.data.message);
-        if ($snackbar) {
-          $snackbar.open();
-        }
-        break;
-      default:
-        break;
+    const result: any = await ajax("post", "/auth/login", user_info);
+    if (result.status === 200) {
+      token.set(result.data.token);
+      localStorage.setItem("token", result.data.token);
+      goto("/");
     }
   };
   export const onSignup = async () => {
@@ -43,40 +27,44 @@
   };
 </script>
 
-<div class="container d-flex justify-content-center align-items-center p-5">
-  <div class="card shadow-sm" style="min-width: 300px;">
+<div class="flex flex-col justify-center items-center w-full h-full py-24">
+  <div class="card shadow-md w-96 h-fit">
     <Card>
-      <PrimaryAction class="border-bottom border-dark p-3">
-        Log in
+      <PrimaryAction class="border-bottom border-dark p-5">
+        {text("log in", $lang)}
       </PrimaryAction>
       <Content class="p-3">
-        <div class="row">
-          <div class="col">
+        <div class="w-full">
+          <div class="w-full">
             <Textfield
-              bind:value={email}
-              label="Email"
+              class="w-full"
+              label={text("email", $lang)}
               type="email"
-              class="w-100"
+              bind:value={email}
             />
           </div>
         </div>
-        <div class="row">
-          <div class="col">
+        <div class="w-full">
+          <div class="w-full">
             <Textfield
-              bind:value={password}
-              label="Password"
+              class="w-full"
+              label={text("password", $lang)}
               type="password"
-              class="w-100"
+              bind:value={password}
             />
           </div>
         </div>
       </Content>
-      <Actions class="row p-3">
-        <Button class="col" onclick={onLogin}>
-          <Label>Log in</Label>
+      <Actions class="flex flex-row justify-end items-center p-3">
+        <Button onclick={onLogin}>
+          <Label>
+            {text("log in", $lang)}
+          </Label>
         </Button>
-        <Button class="col" onclick={onSignup}>
-          <Label>Sign up</Label>
+        <Button onclick={onSignup}>
+          <Label>
+            {text("sign up", $lang)}
+          </Label>
         </Button>
       </Actions>
     </Card>

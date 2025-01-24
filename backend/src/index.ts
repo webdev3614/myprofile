@@ -6,10 +6,11 @@ import bodyParser from "body-parser";
 import https from "https";
 import fs from "fs";
 import path from "path";
+import dotenv from "dotenv";
+
 import {
   secret
 } from "./middleware";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -24,12 +25,12 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(secret)
 mongoose.connect('mongodb://localhost:27017/dream')
-.then(() => {
-  console.log('Connected to MongoDB');
-})
-.catch((err) => {
-  console.error('Failed to connect to MongoDB', err);
-});
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('Failed to connect to MongoDB', err);
+  });
 
 app.use("/api", router)
 

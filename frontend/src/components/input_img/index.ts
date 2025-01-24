@@ -1,0 +1,1 @@
+export { default as InputImg } from "./input_img.svelte";

@@ -8,7 +8,7 @@ const secret = (req: AuthRequest, res: Response, next: NextFunction) => {
     if (req.secret) {
         next();
     } else {
-        res.status(401).json({ message: "secret key doesn't exist" })
+        res.status(401).json({ msg: "secret key doesn't exist" })
     }
 }
 

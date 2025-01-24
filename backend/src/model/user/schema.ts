@@ -6,6 +6,7 @@ interface IUser extends Document {
     last_name: string
     email: string
     password: string
+    img: string
     is_admin: boolean
     createdAt: Date
 }
@@ -34,6 +35,9 @@ const user_schema = new Schema<IUser>({
         type: String,
         required: true,
         minlength: 6  // Password must be at least 6 characters long
+    },
+    img: {
+        type: String
     },
     is_admin: {
         type: Boolean,
